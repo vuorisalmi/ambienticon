@@ -19,5 +19,7 @@ OTHER_FILES += qml/ambienticon.qml \
     rpm/ambienticon.yaml \
     ambienticon.desktop \
     qml/pages/MainPage.qml \
-    qml/pages/ColorOverlayPage.qml
+    qml/pages/ColorOverlayPage.qml \
+    qml/icons/ambient_testicon_white_96.png \
+    graphics/ambient_testicon.svg
 
