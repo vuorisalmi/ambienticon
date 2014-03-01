@@ -49,6 +49,10 @@ Page {
                 text: "QML ColorOverlay Page"
                 onClicked: pageStack.push(Qt.resolvedUrl("ColorOverlayPage.qml"))
             }
+            MenuItem {
+                text: "RGB icon overlay Page"
+                onClicked: pageStack.push(Qt.resolvedUrl("IconOverlayPage.qml"))
+            }
         }
 
         // Tell SilicaFlickable the height of its content.
@@ -69,7 +73,8 @@ Page {
                 onClicked: { pageStack.push(Qt.resolvedUrl("ColorOverlayPage.qml")) }
             }
             Button {
-                text: "2. Another option"
+                text: "2. RGB icon Overlay"
+                onClicked: { pageStack.push(Qt.resolvedUrl("IconOverlayPage.qml")) }
             }
         }
     }
