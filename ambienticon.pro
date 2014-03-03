@@ -20,12 +20,8 @@ OTHER_FILES += qml/ambienticon.qml \
     ambienticon.desktop \
     qml/pages/MainPage.qml \
     qml/pages/ColorOverlayPage.qml \
-    qml/icons/ambient_testicon_white_96.png \
     graphics/ambient_testicon.svg \
     qml/pages/IconOverlayPage.qml \
-    qml/icons/ambient_testicon_red_96.png \
-    qml/icons/ambient_testicon_green_96.png \
-    qml/icons/ambient_testicon_blue_96.png \
     qml/pages/RGBIcon.qml \
     qml/icons/ambient_testicon_blue_86.png \
     qml/icons/ambient_testicon_black_86.png \

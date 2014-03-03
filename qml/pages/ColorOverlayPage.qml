@@ -35,9 +35,9 @@ Page {
                     anchors.top: parent.top
                     //anchors.left: parent.left
                     anchors.horizontalCenter: parent.horizontalCenter
-                    source: "../icons/ambient_testicon_white_96.png"
-                    width: 96
-                    height: 96
+                    source: "../icons/ambient_testicon_white_86.png"
+                    width: 86
+                    height: 86
                 }
                 ColorOverlay {
                     anchors.fill: icon
