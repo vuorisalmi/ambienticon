@@ -26,5 +26,13 @@ OTHER_FILES += qml/ambienticon.qml \
     qml/icons/ambient_testicon_red_96.png \
     qml/icons/ambient_testicon_green_96.png \
     qml/icons/ambient_testicon_blue_96.png \
-    qml/pages/RGBIcon.qml
+    qml/pages/RGBIcon.qml \
+    qml/icons/ambient_testicon_blue_86.png \
+    qml/icons/ambient_testicon_black_86.png \
+    qml/icons/ambient_testicon_green_86.png \
+    qml/icons/ambient_testicon_red_86.png \
+    qml/icons/ambient_testicon_green+blue_86.png \
+    qml/icons/ambient_testicon_white_86.png \
+    qml/icons/ambient_testicon_red+green_86.png \
+    qml/icons/ambient_testicon_red+blue_86.png
 
