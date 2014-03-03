@@ -112,9 +112,18 @@ Page {
             SectionHeader { text: "RGB icon" }
 
             Row {
-                Rectangle {
+                spacing: Theme.paddingLarge
+                Item {
+                    width: 86; height: 86
+                    Rectangle {
+                        color: Qt.rgba(redSlider.value, greenSlider.value, blueSlider.value, 1.0)
+                        width: 80; height: 80
+                        anchors.centerIn: parent
+                    }
+                }
+                RGBIcon {
                     color: Qt.rgba(redSlider.value, greenSlider.value, blueSlider.value, 1.0)
-                    width: 80; height: 80
+                    source: "../icons/ambient_testicon_?_86.png"
                 }
             }
 

@@ -25,5 +25,6 @@ OTHER_FILES += qml/ambienticon.qml \
     qml/pages/IconOverlayPage.qml \
     qml/icons/ambient_testicon_red_96.png \
     qml/icons/ambient_testicon_green_96.png \
-    qml/icons/ambient_testicon_blue_96.png
+    qml/icons/ambient_testicon_blue_96.png \
+    qml/pages/RGBIcon.qml
 
