@@ -10,6 +10,26 @@ Item {
     property color color //: "#ffffff"  // default to white
     property string source   // filename should contain one "?"
 
+    // Debug properties
+    property bool _redFilterVisible: iconR.visible
+    property bool _greenFilterVisible: iconG.visible
+    property bool _blueFilterVisible: iconB.visible
+
+    // IDs ("enums") of the base colors
+    property int __baseColorBlack: 0
+    property int __baseColorR:     1
+    property int __baseColorG:     2
+    property int __baseColorB:     4
+    property int __baseColorRG:    3
+    property int __baseColorRB:    5
+    property int __baseColorGB:    6
+    property int __baseColorRGB:   7
+    property int __baseColorWhite: __baseColorRGB
+    property int __baseColorCurrent: ((color.r > 0) * __baseColorR) + ((color.g > 0) * __baseColorG) + ((color.b > 0) * __baseColorB)
+
+    property variant __iconName: ["black", "red", "green", "red+green", "blue", "red+blue", "green+blue", "white"]
+
+    // File names of the icon color variants
     property string __sourceBlack
     property string __sourceWhite
     property string __sourceR
@@ -72,26 +92,55 @@ Item {
         }
     }
     function baseOpacity (color) {
-        if (color.g === 0 && color.b === 0) {
-            return color.r;
-        } else if (color.r === 0 && color.b === 0) {
-            return color.g;
-        } else if (color.r === 0 && color.g === 0) {
-            return color.b;
+        if (__baseColorCurrent === __baseColorR || __baseColorCurrent === __baseColorG || __baseColorCurrent === __baseColorB ) {
+            return Math.max(color.r, color.g, color.b);
+        } else if (__baseColorCurrent === __baseColorRG) {
+            //return Math.min(color.r, color.g);
+            return (color.r + color.g) / 2;     // !!!!!!!!!!!!!!!!
+        } else if (__baseColorCurrent === __baseColorRB) {
+            //return Math.min(color.r, color.b);
+            return (color.r + color.b) / 2;     // !!!!!!!!!!!!!!!!
+        } else if (__baseColorCurrent === __baseColorGB) {
+            //return Math.min(color.g, color.b);
+            return (color.g + color.b) / 2;     // !!!!!!!!!!!!!!!!
         } else {
-            // TODO: a lot to do in here: overall luminance --> opacity
-            return 1;
+            return Math.min(color.r, color.g, color.b);
         }
+
+//        if (color.g === 0 && color.b === 0) {
+//            return color.r;
+//        } else if (color.r === 0 && color.b === 0) {
+//            return color.g;
+//        } else if (color.r === 0 && color.g === 0) {
+//            return color.b;
+//        } else {
+//            // TODO: a lot to do in here: overall luminance --> opacity
+//            return 1;
+//        }
+    }
+
+    function isRedSmallest(color) {
+        return (color.r < color.g && color.r < color.b);
+    }
+    function isGreenSmallest(color) {
+        return (color.g < color.r && color.g < color.b);
+    }
+    function isBlueSmallest(color) {
+        return (color.b < color.r && color.b < color.g);
     }
 
     // TODO: currently assumes red component is 1.0, overall luminance (->opacity) not taken into account
     function redFilterOpacity (color) {
-        if (color.b === 0.0) {
+        var baseOpa = baseOpacity(color);
+        if (isBlueSmallest(color)) {
             // No blue color component, is there more red than green?
-            return (color.r > color.g) ? ((color.r - color.g) * color.r) : 0.0;
-        } else if (color.g === 0.0) {
+            //return (color.r > color.g) ? ((color.r - color.g) * color.r) : 0.0;
+            return (color.r > color.g) ? (color.r - color.g) : 0.0;
+            //return (color.r > color.g) ? ((color.r - baseOpa) / (1 - baseOpa)) : 0.0;   // !!!!!!!!!!
+
+        } else if (isGreenSmallest(color)) {
             // No green color component, is there more red than blue?
-            return (color.r > color.b) ? ((color.r - color.b) * color.r) : 0.0;
+            return (color.r > color.b) ? (color.r - color.b) : 0.0;
         } else {
             // TODO: all three color components present
             return 0.0
@@ -100,10 +149,10 @@ Item {
     function greenFilterOpacity (color) {
         if (color.b === 0.0) {
             // No blue color component, is there more green than red?
-            return (color.g > color.r) ? ((color.g - color.r) * color.g) : 0.0;
+            return (color.g > color.r) ? (color.g - color.r) : 0.0;
         } else if (color.r === 0.0) {
             // No red color component, is there more green than blue?
-            return (color.g > color.b) ? ((color.g - color.b) * color.g) : 0.0;
+            return (color.g > color.b) ? (color.g - color.b) : 0.0;
         } else {
             // TODO: all three color components present
             return 0.0
@@ -112,10 +161,10 @@ Item {
     function blueFilterOpacity (color) {
         if (color.g === 0.0) {
             // No green color component, is there more blue than red?
-            return (color.b > color.r) ? ((color.b - color.r) * color.b) : 0.0;
+            return (color.b > color.r) ? (color.b - color.r) : 0.0;
         } else if (color.r === 0.0) {
             // No red color component, is there more blue than green?
-            return (color.b > color.g) ? ((color.b - color.g) * color.b) : 0.0;
+            return (color.b > color.g) ? (color.b - color.g) : 0.0;
         } else {
             // TODO: all three color components present
             return 0.0

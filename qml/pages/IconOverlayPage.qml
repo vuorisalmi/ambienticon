@@ -57,8 +57,24 @@ Page {
                     }
                 }
                 RGBIcon {
+                    id: rgbIcon
                     color: Qt.rgba(redSlider.value, greenSlider.value, blueSlider.value, 1.0)
                     source: "../icons/ambient_testicon_?_86.png"
+                }
+                Column {
+                    Label { text: "R filter " + rgbIcon.redFilterOpacity(rgbIcon.color).toFixed(2); font.pixelSize: 20 }
+                    Label { text: "G filter " + rgbIcon.greenFilterOpacity(rgbIcon.color).toFixed(2); font.pixelSize: 20 }
+                    Label { text: "B filter " + rgbIcon.blueFilterOpacity(rgbIcon.color).toFixed(2); font.pixelSize: 20 }
+                }
+                Column {
+                    Label { text: (rgbIcon._redFilterVisible) ? "R" : " "; font.pixelSize: 20 }
+                    Label { text: (rgbIcon._greenFilterVisible) ? "G" : " "; font.pixelSize: 20 }
+                    Label { text: (rgbIcon._blueFilterVisible) ? "B" : " "; font.pixelSize: 20 }
+                }
+                Column {
+                    Label { text: "Base: " + rgbIcon.__baseColorCurrent; font.pixelSize: 20 }
+                    Label { text: rgbIcon.__iconName[rgbIcon.__baseColorCurrent]; font.pixelSize: 20 }
+                    Label { text: "-opa " + rgbIcon.baseOpacity(rgbIcon.color).toFixed(2); font.pixelSize: 20 }
                 }
             }
 
@@ -93,6 +109,106 @@ Page {
                 valueText: value.toFixed(2)
                 label: "Blue"
             }
+
+            // Misc color test squares
+            SectionHeader { text: "Overlapping icon test" }
+
+            Rectangle {
+                width: parent.width; height: 86
+                color: "black"
+
+                Image {
+                    x: 0; y: 0
+                    width: 86; height: 86
+                    source: "../icons/ambient_testicon_red_86.png"
+                    opacity: 0.75
+                }
+                Image {
+                    x: 30; y: 0
+                    width: 86; height: 86
+                    source: "../icons/ambient_testicon_red_86.png"
+                    opacity: 0.75
+                }
+                Image {
+                    x: 120; y: 0
+                    width: 86; height: 86
+                    source: "../icons/ambient_testicon_red_86.png"
+                    opacity: 0.5
+                }
+                Image {
+                    x: 120+30; y: 0
+                    width: 86; height: 86
+                    source: "../icons/ambient_testicon_red_86.png"
+                    opacity: 0.5
+                }
+                Image {
+                    x: 240; y: 0
+                    width: 86; height: 86
+                    source: "../icons/ambient_testicon_red_86.png"
+                    opacity: 0.25
+                }
+                Image {
+                    x: 240+30; y: 0
+                    width: 86; height: 86
+                    source: "../icons/ambient_testicon_red_86.png"
+                    opacity: 0.25
+                }
+            }
+
+            Row {
+                spacing: Theme.paddingLarge
+                Item {
+                    width: 10; height: 86
+                    Image {
+                        width: 86; height: 86
+                        source: "../icons/ambient_testicon_red_86.png"
+                        opacity: 0.75
+                    }
+                }
+                Item {
+                    width: 86; height: 86
+                    Image {
+                        width: 86; height: 86
+                        source: "../icons/ambient_testicon_red_86.png"
+                        opacity: 0.75
+                    }
+                }
+
+                Item {
+                    width: 10; height: 86
+                    Image {
+                        width: 86; height: 86
+                        source: "../icons/ambient_testicon_red_86.png"
+                        opacity: 0.5
+                    }
+                }
+                Item {
+                    width: 86; height: 86
+                    Image {
+                        width: 86; height: 86
+                        source: "../icons/ambient_testicon_red_86.png"
+                        opacity: 0.5
+                    }
+                }
+
+                Item {
+                    width: 10; height: 86
+                    Image {
+                        width: 86; height: 86
+                        source: "../icons/ambient_testicon_red_86.png"
+                        opacity: 0.25
+                    }
+                }
+                Item {
+                    width: 86; height: 86
+                    Image {
+                        width: 86; height: 86
+                        source: "../icons/ambient_testicon_red_86.png"
+                        opacity: 0.25
+                    }
+                }
+            }
+
 
             // Misc color test squares
             SectionHeader { text: "Misc coloring tests" }
