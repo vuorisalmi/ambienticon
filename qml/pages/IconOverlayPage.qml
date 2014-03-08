@@ -62,9 +62,9 @@ Page {
                     source: "../icons/ambient_testicon_?_86.png"
                 }
                 Column {
-                    Label { text: "R filter " + rgbIcon.redFilterOpacity(rgbIcon.color).toFixed(2); font.pixelSize: 20 }
-                    Label { text: "G filter " + rgbIcon.greenFilterOpacity(rgbIcon.color).toFixed(2); font.pixelSize: 20 }
-                    Label { text: "B filter " + rgbIcon.blueFilterOpacity(rgbIcon.color).toFixed(2); font.pixelSize: 20 }
+                    Label { text: "R filter " + rgbIcon.filterOpacity(rgbIcon.color.r, rgbIcon.color).toFixed(2); font.pixelSize: 20 }
+                    Label { text: "G filter " + rgbIcon.filterOpacity(rgbIcon.color.g, rgbIcon.color).toFixed(2); font.pixelSize: 20 }
+                    Label { text: "B filter " + rgbIcon.filterOpacity(rgbIcon.color.b, rgbIcon.color).toFixed(2); font.pixelSize: 20 }
                 }
                 Column {
                     Label { text: (rgbIcon._redFilterVisible) ? "R" : " "; font.pixelSize: 20 }
@@ -72,9 +72,9 @@ Page {
                     Label { text: (rgbIcon._blueFilterVisible) ? "B" : " "; font.pixelSize: 20 }
                 }
                 Column {
-                    Label { text: "Base: " + rgbIcon.__baseColorCurrent; font.pixelSize: 20 }
-                    Label { text: rgbIcon.__iconName[rgbIcon.__baseColorCurrent]; font.pixelSize: 20 }
-                    Label { text: "-opa " + rgbIcon.baseOpacity(rgbIcon.color).toFixed(2); font.pixelSize: 20 }
+                    Label { text: "Base: " + rgbIcon.__baseColor; font.pixelSize: 20 }
+                    Label { text: rgbIcon.__iconName[rgbIcon.__baseColor]; font.pixelSize: 20 }
+                    Label { text: "Opac " + rgbIcon.baseOpacity(rgbIcon.color).toFixed(2); font.pixelSize: 20 }
                 }
             }
 

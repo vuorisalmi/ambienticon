@@ -15,17 +15,23 @@ Item {
     property bool _greenFilterVisible: iconG.visible
     property bool _blueFilterVisible: iconB.visible
 
-    // IDs ("enums") of the base colors
-    property int __baseColorBlack: 0
-    property int __baseColorR:     1
-    property int __baseColorG:     2
-    property int __baseColorB:     4
-    property int __baseColorRG:    3
-    property int __baseColorRB:    5
-    property int __baseColorGB:    6
-    property int __baseColorRGB:   7
-    property int __baseColorWhite: __baseColorRGB
-    property int __baseColorCurrent: ((color.r > 0) * __baseColorR) + ((color.g > 0) * __baseColorG) + ((color.b > 0) * __baseColorB)
+    // IDs ("enums") of the pure color components colors
+    property int __colorBlack: 0
+    property int __colorR:     1
+    property int __colorG:     2
+    property int __colorB:     4
+    property int __colorRG:    3
+    property int __colorRB:    5
+    property int __colorGB:    6
+    property int __colorWhite: 7
+    // Current base color
+    property int __baseColor:  ((color.r > 0) * __colorR) + ((color.g > 0) * __colorG) + ((color.b > 0) * __colorB)
+    property bool __base1Color: __baseColor === __colorR || __baseColor === __colorG || __baseColor === __colorB
+    property bool __base2Color: __baseColor === __colorRG || __baseColor === __colorRB || __baseColor === __colorGB
+    property bool __base3Color: __baseColor === __colorWhite
+
+    // The "middle" color component, in intensity (not max, not min)
+    property real __midColor: (color.r + color.g + color.b) - Math.max(color.r, color.g, color.b) - Math.min(color.r, color.g, color.b)
 
     property variant __iconName: ["black", "red", "green", "red+green", "blue", "red+blue", "green+blue", "white"]
 
@@ -52,30 +58,11 @@ Item {
         __sourceGB = source.replace("?", "green+blue")
     }
 
-//    onColorChanged: {
-//        if (color.g === 0 && color.b === 0) {
-//            __sourceBase = __sourceR;
-//            iconBase.opacity = color.r;
-//        } else if (color.r === 0 && color.b === 0) {
-//            __sourceBase = __sourceG;
-//            iconBase.opacity = color.g;
-//        } else if (color.r === 0 && color.g === 0) {
-//            __sourceBase = __sourceB;
-//            iconBase.opacity = color.b;
-//        } else if (color.b === 0) {
-//            __sourceBase = __sourceRG;
-//        } else if (color.g === 0) {
-//            __sourceBase = __sourceRB;
-//        } else if (color.r === 0) {
-//            __sourceBase = __sourceGB;
-//        } else {
-//            __sourceBase = __sourceWhite;
-//        }
-//        console.log("Color changed: ", color)
-//    }
-
+    // TODO: refactor to an array lookup
     function baseIconSource (color) {
-        if (color.g === 0 && color.b === 0) {
+        if (color.r + color.g + color.b === 0) {
+            return __sourceBlack;
+        } else if (color.g === 0 && color.b === 0) {
             return __sourceR;
         } else if (color.r === 0 && color.b === 0) {
             return __sourceG;
@@ -92,84 +79,97 @@ Item {
         }
     }
     function baseOpacity (color) {
-        if (__baseColorCurrent === __baseColorR || __baseColorCurrent === __baseColorG || __baseColorCurrent === __baseColorB ) {
+        if (__base1Color) {
             return Math.max(color.r, color.g, color.b);
-        } else if (__baseColorCurrent === __baseColorRG) {
-            //return Math.min(color.r, color.g);
-            return (color.r + color.g) / 2;     // !!!!!!!!!!!!!!!!
-        } else if (__baseColorCurrent === __baseColorRB) {
-            //return Math.min(color.r, color.b);
-            return (color.r + color.b) / 2;     // !!!!!!!!!!!!!!!!
-        } else if (__baseColorCurrent === __baseColorGB) {
-            //return Math.min(color.g, color.b);
-            return (color.g + color.b) / 2;     // !!!!!!!!!!!!!!!!
+        } else if (__base2Color) {
+            // Average of the two components (one is always zero)
+            return (color.r + color.g + color.b) / 2;
         } else {
-            return Math.min(color.r, color.g, color.b);
+            // Three or zero (black) base color
+            // TODO ???
+            //return ((color.r + color.g + color.b) - Math.max(color.r, color.g, color.b)) / 2;
+            return 1.0;
         }
+    }
 
-//        if (color.g === 0 && color.b === 0) {
-//            return color.r;
-//        } else if (color.r === 0 && color.b === 0) {
-//            return color.g;
-//        } else if (color.r === 0 && color.g === 0) {
-//            return color.b;
+//    function isRedSmallest(color) {
+//        return (color.r < color.g && color.r < color.b);
+//    }
+//    function isGreenSmallest(color) {
+//        return (color.g < color.r && color.g < color.b);
+//    }
+//    function isBlueSmallest(color) {
+//        return (color.b < color.r && color.b < color.g);
+//    }
+
+    // Returns the opacity of the colorComp filter. Generic function for any color filter.
+    function filterOpacity (colorComp, color) {
+        if (__base1Color) {
+            // No need for any additional filtering (independent if the color component is the one color or not)
+            return 0.0;
+        } else if (__base2Color) {
+            // If colorComp is the bigger component of two non-zero ones...
+            return (colorComp === Math.max(color.r, color.g, color.b)) ?
+                        (colorComp - (color.r + color.g + color.b - colorComp)) : 0.0;
+        } else if (colorComp === Math.max(color.r, color.g, color.b)) {
+            // All three color components present, colorComp is the largers
+            return colorComp - __midColor;
+        } else if (colorComp === __midColor) {
+            return colorComp - Math.min(color.r, color.g, color.b);
+        } else {
+            return 0.0;
+        }
+    }
+
+    function stackingOrder (colorComp, color) {
+        if (__base3Color && colorComp === Math.max(color.r, color.g, color.b)) {
+            return 3;
+        } else if (__base3Color && colorComp === __midColor) {
+            return 2;
+        } else {
+            // Stacking only matters in case of all three color componets (RGB) visible
+            return 1;
+        }
+    }
+
+//    // TODO: currently assumes red component is 1.0, overall luminance (->opacity) not taken into account
+//    function redFilterOpacity (color) {
+//        if (__base1Color) {
+//            // No need for any additional filtering (independent if red component is there or not)
+//            return 0.0;
+//        } else if (__base2Color) {
+//            // If red is the bigger component of two non-zero ones...
+//            return (color.r === Math.max(color.r, color.g, color.b)) ? (color.r - (color.g + color.b)) : 0.0;
 //        } else {
-//            // TODO: a lot to do in here: overall luminance --> opacity
-//            return 1;
+//            // TODO: all three color components present
+//            //return color.r - ((color.g + color.b) / 2);
+//            return color.r - color.g;
 //        }
-    }
-
-    function isRedSmallest(color) {
-        return (color.r < color.g && color.r < color.b);
-    }
-    function isGreenSmallest(color) {
-        return (color.g < color.r && color.g < color.b);
-    }
-    function isBlueSmallest(color) {
-        return (color.b < color.r && color.b < color.g);
-    }
-
-    // TODO: currently assumes red component is 1.0, overall luminance (->opacity) not taken into account
-    function redFilterOpacity (color) {
-        var baseOpa = baseOpacity(color);
-        if (isBlueSmallest(color)) {
-            // No blue color component, is there more red than green?
-            //return (color.r > color.g) ? ((color.r - color.g) * color.r) : 0.0;
-            return (color.r > color.g) ? (color.r - color.g) : 0.0;
-            //return (color.r > color.g) ? ((color.r - baseOpa) / (1 - baseOpa)) : 0.0;   // !!!!!!!!!!
-
-        } else if (isGreenSmallest(color)) {
-            // No green color component, is there more red than blue?
-            return (color.r > color.b) ? (color.r - color.b) : 0.0;
-        } else {
-            // TODO: all three color components present
-            return 0.0
-        }
-    }
-    function greenFilterOpacity (color) {
-        if (color.b === 0.0) {
-            // No blue color component, is there more green than red?
-            return (color.g > color.r) ? (color.g - color.r) : 0.0;
-        } else if (color.r === 0.0) {
-            // No red color component, is there more green than blue?
-            return (color.g > color.b) ? (color.g - color.b) : 0.0;
-        } else {
-            // TODO: all three color components present
-            return 0.0
-        }
-    }
-    function blueFilterOpacity (color) {
-        if (color.g === 0.0) {
-            // No green color component, is there more blue than red?
-            return (color.b > color.r) ? (color.b - color.r) : 0.0;
-        } else if (color.r === 0.0) {
-            // No red color component, is there more blue than green?
-            return (color.b > color.g) ? (color.b - color.g) : 0.0;
-        } else {
-            // TODO: all three color components present
-            return 0.0
-        }
-    }
+//    }
+//    function greenFilterOpacity (color) {
+//        if (color.b === 0.0) {
+//            // No blue color component, is there more green than red?
+//            return (color.g > color.r) ? (color.g - color.r) : 0.0;
+//        } else if (color.r === 0.0) {
+//            // No red color component, is there more green than blue?
+//            return (color.g > color.b) ? (color.g - color.b) : 0.0;
+//        } else {
+//            // TODO: all three color components present  !!!!!!!!!
+//            return (color.g > color.b) ? (color.g - color.b) : 0.0;
+//        }
+//    }
+//    function blueFilterOpacity (color) {
+//        if (color.g === 0.0) {
+//            // No green color component, is there more blue than red?
+//            return (color.b > color.r) ? (color.b - color.r) : 0.0;
+//        } else if (color.r === 0.0) {
+//            // No red color component, is there more blue than green?
+//            return (color.b > color.g) ? (color.b - color.g) : 0.0;
+//        } else {
+//            // TODO: all three color components present
+//            return 0.0
+//        }
+//    }
 
     Image {
         // Black image is always shown, fully opaque, in order not to add extra
@@ -189,21 +189,24 @@ Item {
         anchors.fill: parent
         // Only needed to be visible when there is more red color than some other and when it is not pure red
         visible: ((rgbIcon.color.r > rgbIcon.color.g || rgbIcon.color.r > rgbIcon.color.b) && (rgbIcon.color.g > 0 || rgbIcon.color.b > 0))
-        opacity: redFilterOpacity(color)
+        opacity: filterOpacity(color.r, color)
+        z: stackingOrder(color.r, color)
     }
     Image {
         id: iconG
         source: __sourceG
         anchors.fill: parent
         visible: ((rgbIcon.color.g > rgbIcon.color.r || rgbIcon.color.g > rgbIcon.color.b) && (rgbIcon.color.r > 0 || rgbIcon.color.b > 0))
-        opacity: greenFilterOpacity(color)
+        opacity: filterOpacity(color.g, color)
+        z: stackingOrder(color.g, color)
     }
     Image {
         id: iconB
         source: __sourceB
         anchors.fill: parent
         visible: ((rgbIcon.color.b > rgbIcon.color.r || rgbIcon.color.b > rgbIcon.color.g) && (rgbIcon.color.r > 0 || rgbIcon.color.g > 0))
-        opacity: blueFilterOpacity(color)
+        opacity: filterOpacity(color.b, color)
+        z: stackingOrder(color.b, color)
     }
 
 }
