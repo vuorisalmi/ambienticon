@@ -1,5 +1,4 @@
 import QtQuick 2.0
-//import Sailfish.Silica 1.0
 
 Item {
     id: rgbIcon
@@ -7,7 +6,7 @@ Item {
     height: width
 
     // Main interface:
-    property color color //: "#ffffff"  // default to white
+    property color color: "#ffffff"  // default to white
     property string source   // filename should contain one "?"
 
     // Debug properties
@@ -15,7 +14,7 @@ Item {
     property bool _greenFilterVisible: iconG.visible
     property bool _blueFilterVisible: iconB.visible
 
-    // IDs ("enums") of the pure color components colors
+    // IDs ("enums") of the pure color components
     property int __colorBlack: 0
     property int __colorR:     1
     property int __colorG:     2
@@ -35,6 +34,7 @@ Item {
 
     property variant __iconName: ["black", "red", "green", "red+green", "blue", "red+blue", "green+blue", "white"]
 
+    // TODO: refactor to an array
     // File names of the icon color variants
     property string __sourceBlack
     property string __sourceWhite
@@ -45,8 +45,7 @@ Item {
     property string __sourceRB
     property string __sourceGB
 
-    //property real __sourceBase: __sourceWhite  // base color for further filtering
-
+    // TODO: refactor to an array lookup
     onSourceChanged: {
         __sourceBlack = source.replace("?", "black")
         __sourceWhite = source.replace("?", "white")
@@ -104,19 +103,18 @@ Item {
 
     // Returns the opacity of the colorComp filter. Generic function for any color filter.
     function filterOpacity (colorComp, color) {
-        if (__base1Color) {
-            // No need for any additional filtering (independent if the color component is the one color or not)
-            return 0.0;
-        } else if (__base2Color) {
+        if (__base2Color) {
             // If colorComp is the bigger component of two non-zero ones...
             return (colorComp === Math.max(color.r, color.g, color.b)) ?
                         (colorComp - (color.r + color.g + color.b - colorComp)) : 0.0;
-        } else if (colorComp === Math.max(color.r, color.g, color.b)) {
+        } else if (__base3Color && colorComp === Math.max(color.r, color.g, color.b)) {
             // All three color components present, colorComp is the largers
             return colorComp - __midColor;
-        } else if (colorComp === __midColor) {
+        } else if (__base3Color && colorComp === __midColor) {
             return colorComp - Math.min(color.r, color.g, color.b);
         } else {
+            // No filter needed if color is pure black, there is only one color component
+            // or if colorComp is the smallest of the three
             return 0.0;
         }
     }
