@@ -9,6 +9,8 @@ Ambient Icon
 
 * Rafactor icon file names etc. into an array
 
+* Bug: green filter visible too often?
+
 * Add README
 
 * Add LICENSE

@@ -62,15 +62,32 @@ Page {
                     source: "../icons/ambient_testicon_?_86.png"
                 }
                 Column {
-                    Label { text: "R filter " + rgbIcon.filterOpacity(rgbIcon.color.r, rgbIcon.color).toFixed(2); font.pixelSize: 20 }
-                    Label { text: "G filter " + rgbIcon.filterOpacity(rgbIcon.color.g, rgbIcon.color).toFixed(2); font.pixelSize: 20 }
-                    Label { text: "B filter " + rgbIcon.filterOpacity(rgbIcon.color.b, rgbIcon.color).toFixed(2); font.pixelSize: 20 }
+                    Label { text: "R " + rgbIcon.filterOpacity(rgbIcon.color.r, rgbIcon.color).toFixed(2);
+                            font.pixelSize: 20
+                            color: (rgbIcon._redFilterVisible) ? "white" : Theme.secondaryColor }
+                    Label { text: "G " + rgbIcon.filterOpacity(rgbIcon.color.g, rgbIcon.color).toFixed(2);
+                            font.pixelSize: 20
+                            color: (rgbIcon._greenFilterVisible) ? "white" : Theme.secondaryColor }
+                    Label { text: "B " + rgbIcon.filterOpacity(rgbIcon.color.b, rgbIcon.color).toFixed(2);
+                            font.pixelSize: 20
+                            color: (rgbIcon._blueFilterVisible) ? "white" : Theme.secondaryColor }
                 }
                 Column {
-                    Label { text: (rgbIcon._redFilterVisible) ? "R" : " "; font.pixelSize: 20 }
-                    Label { text: (rgbIcon._greenFilterVisible) ? "G" : " "; font.pixelSize: 20 }
-                    Label { text: (rgbIcon._blueFilterVisible) ? "B" : " "; font.pixelSize: 20 }
+                    Label { text: "RG " + rgbIcon.filter2ColorOpacity(rgbIcon.color.r, rgbIcon.color.g, rgbIcon.color.b).toFixed(2);
+                            font.pixelSize: 20
+                            color: (rgbIcon._rgFilterVisible) ? "white" : Theme.secondaryColor }
+                    Label { text: "RB " + rgbIcon.filter2ColorOpacity(rgbIcon.color.r, rgbIcon.color.b, rgbIcon.color.g).toFixed(2);
+                            font.pixelSize: 20
+                            color: (rgbIcon._rbFilterVisible) ? "white" : Theme.secondaryColor }
+                    Label { text: "GB " + rgbIcon.filter2ColorOpacity(rgbIcon.color.g, rgbIcon.color.b, rgbIcon.color.r).toFixed(2);
+                            font.pixelSize: 20
+                            color: (rgbIcon._gbFilterVisible) ? "white" : Theme.secondaryColor }
                 }
+//                Column {
+//                    Label { text: (rgbIcon._redFilterVisible) ? "R" : " "; font.pixelSize: 20 }
+//                    Label { text: (rgbIcon._greenFilterVisible) ? "G" : " "; font.pixelSize: 20 }
+//                    Label { text: (rgbIcon._blueFilterVisible) ? "B" : " "; font.pixelSize: 20 }
+//                }
                 Column {
                     Label { text: "Base: " + rgbIcon.__baseColor; font.pixelSize: 20 }
                     Label { text: rgbIcon.__iconName[rgbIcon.__baseColor]; font.pixelSize: 20 }
