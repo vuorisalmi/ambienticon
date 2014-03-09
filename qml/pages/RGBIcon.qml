@@ -28,6 +28,7 @@ Item {
     property int __colorWhite: 7
     // Current base color
     property int __baseColor:  ((color.r > 0) * __colorR) + ((color.g > 0) * __colorG) + ((color.b > 0) * __colorB)
+    // How many color components are there in the current base color?
     property bool __base1Color: __baseColor === __colorR || __baseColor === __colorG || __baseColor === __colorB
     property bool __base2Color: __baseColor === __colorRG || __baseColor === __colorRB || __baseColor === __colorGB
     property bool __base3Color: __baseColor === __colorWhite
@@ -89,19 +90,10 @@ Item {
         } else {
             // Three or zero (black) base color
             // TODO: not quite perfect if max < 1.0, not pretty close already...
+            // TODO: gives a little bit too bright color for darker colors
             return Math.max(color.r, color.g, color.b);
         }
     }
-
-//    function isRedSmallest(color) {
-//        return (color.r < color.g && color.r < color.b);
-//    }
-//    function isGreenSmallest(color) {
-//        return (color.g < color.r && color.g < color.b);
-//    }
-//    function isBlueSmallest(color) {
-//        return (color.b < color.r && color.b < color.g);
-//    }
 
     // Returns the opacity of the colorComp filter. Generic function for any color filter.
     function filterOpacity (colorComp, color) {
@@ -111,13 +103,6 @@ Item {
                         (colorComp - (color.r + color.g + color.b - colorComp)) : 0.0;
         } else if (__base3Color && colorComp === Math.max(color.r, color.g, color.b) && colorComp > __midColor) {
             return colorComp - __midColor;
-
-//        } else if (__base3Color && colorComp === Math.max(color.r, color.g, color.b)) {
-//            // All three color components present, colorComp is the largest,
-//            // return delta to __midColor or to min if __midColor is exactly the same
-//            return (colorComp > __midColor) ? (colorComp - __midColor) : (colorComp - Math.min(color.r, color.g, color.b));
-//        } else if (__base3Color && colorComp === __midColor) {
-//            return colorComp - Math.min(color.r, color.g, color.b);
         } else {
             // No filter needed if color is pure black, there is only one color component
             // or if colorComp is the smallest of the three
@@ -134,58 +119,6 @@ Item {
         }
     }
 
-    // TODO: remove, not needed?
-    // Returns the z order of the colorComp filter (1, 2 or 3)
-    function stackingOrder (colorComp, color) {
-        if (__base3Color && colorComp === Math.max(color.r, color.g, color.b)) {
-            return 3;
-        } else if (__base3Color && colorComp === __midColor) {
-            return 2;
-        } else {
-            // Stacking only matters in case of all three color componets (RGB) visible
-            return 1;
-        }
-    }
-
-//    // TODO: currently assumes red component is 1.0, overall luminance (->opacity) not taken into account
-//    function redFilterOpacity (color) {
-//        if (__base1Color) {
-//            // No need for any additional filtering (independent if red component is there or not)
-//            return 0.0;
-//        } else if (__base2Color) {
-//            // If red is the bigger component of two non-zero ones...
-//            return (color.r === Math.max(color.r, color.g, color.b)) ? (color.r - (color.g + color.b)) : 0.0;
-//        } else {
-//            // TODO: all three color components present
-//            //return color.r - ((color.g + color.b) / 2);
-//            return color.r - color.g;
-//        }
-//    }
-//    function greenFilterOpacity (color) {
-//        if (color.b === 0.0) {
-//            // No blue color component, is there more green than red?
-//            return (color.g > color.r) ? (color.g - color.r) : 0.0;
-//        } else if (color.r === 0.0) {
-//            // No red color component, is there more green than blue?
-//            return (color.g > color.b) ? (color.g - color.b) : 0.0;
-//        } else {
-//            // TODO: all three color components present  !!!!!!!!!
-//            return (color.g > color.b) ? (color.g - color.b) : 0.0;
-//        }
-//    }
-//    function blueFilterOpacity (color) {
-//        if (color.g === 0.0) {
-//            // No green color component, is there more blue than red?
-//            return (color.b > color.r) ? (color.b - color.r) : 0.0;
-//        } else if (color.r === 0.0) {
-//            // No red color component, is there more blue than green?
-//            return (color.b > color.g) ? (color.b - color.g) : 0.0;
-//        } else {
-//            // TODO: all three color components present
-//            return 0.0
-//        }
-//    }
-
     Image {
         // Black image is always shown, fully opaque, in order not to add extra
         // transparency even if the shades were very dark
@@ -194,10 +127,12 @@ Item {
     }
     Image {
         id: iconBase
-        source: baseIconSource(color) //__sourceR // __sourceBase
+        source: baseIconSource(color)
         anchors.fill: parent
         opacity: baseOpacity(color)
     }
+
+    // 2-color filters -- only one if these will be visible at a time
     Image {
         id: iconRG
         source: __sourceRG
@@ -219,6 +154,8 @@ Item {
         visible: (__base3Color && color.r < Math.max(color.r, color.g, color.b) && color.r < __midColor)
         opacity: filter2ColorOpacity(color.g, color.b, color.r)
     }
+
+    // 1-color filters -- only one if these will be visible at a time
     Image {
         id: iconR
         source: __sourceR
@@ -226,16 +163,13 @@ Item {
         // Only needed to be visible when there is more red color than some other and when it is not pure red
         visible: ((rgbIcon.color.r > rgbIcon.color.g || rgbIcon.color.r > rgbIcon.color.b) && (rgbIcon.color.g > 0 || rgbIcon.color.b > 0))
         opacity: filterOpacity(color.r, color)
-        z: stackingOrder(color.r, color)
     }
     Image {
         id: iconG
         source: __sourceG
         anchors.fill: parent
-        // TODO: check the visibility rule, gives true even if opacity is zero...
         visible: ((rgbIcon.color.g > rgbIcon.color.r || rgbIcon.color.g > rgbIcon.color.b) && (rgbIcon.color.r > 0 || rgbIcon.color.b > 0))
         opacity: filterOpacity(color.g, color)
-        z: stackingOrder(color.g, color)
     }
     Image {
         id: iconB
@@ -243,7 +177,6 @@ Item {
         anchors.fill: parent
         visible: ((rgbIcon.color.b > rgbIcon.color.r || rgbIcon.color.b > rgbIcon.color.g) && (rgbIcon.color.r > 0 || rgbIcon.color.g > 0))
         opacity: filterOpacity(color.b, color)
-        z: stackingOrder(color.b, color)
     }
 
 }
