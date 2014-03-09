@@ -14,7 +14,6 @@ SOURCES += src/ambienticon.cpp
 
 OTHER_FILES += qml/ambienticon.qml \
     qml/cover/CoverPage.qml \
-    qml/pages/SecondPage.qml \
     rpm/ambienticon.spec \
     rpm/ambienticon.yaml \
     ambienticon.desktop \
