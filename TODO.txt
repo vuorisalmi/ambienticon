@@ -1,11 +1,6 @@
 Ambient Icon
 ============
 
-
-----
-
-* Remove misc color tests etc.
-
 * Add colored icon on the cover page
 
 * Bug: 3 colors: dark color is not 100% accurate - when none of the components is 1.00

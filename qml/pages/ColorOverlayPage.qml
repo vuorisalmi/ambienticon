@@ -29,6 +29,8 @@
 
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+
+// NOTE: this interface is not accepted by Jolla harbour/store (at least now)
 import QtGraphicalEffects 1.0
 
 Page {
@@ -62,12 +64,13 @@ Page {
                 Image {
                     id: icon
                     anchors.top: parent.top
-                    //anchors.left: parent.left
                     anchors.horizontalCenter: parent.horizontalCenter
                     source: "../icons/ambient_testicon_white_86.png"
                     width: 86
                     height: 86
                 }
+
+                // NOTE: this interface is not accepted by Jolla harbour/store (at least now)
                 ColorOverlay {
                     anchors.fill: icon
                     source: icon
