@@ -84,17 +84,6 @@ Page {
                 onClicked: { highlightIcon.highlighted = !highlightIcon.highlighted }
             }
 
-
-//            TextSwitch {
-//                text: "Highlighted"
-//            }
-
-//            Separator {
-//                alignment: Qt.AlignHCenter
-
-//            }
-
-
         }
     }
 }

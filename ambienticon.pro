@@ -31,5 +31,7 @@ OTHER_FILES += qml/ambienticon.qml \
     qml/icons/ambient_testicon_red+green_86.png \
     qml/icons/ambient_testicon_red+blue_86.png \
     qml/pages/HighlightIcon.qml \
-    TODO.txt
+    TODO.txt \
+    LICENSE.txt \
+    README.txt
 

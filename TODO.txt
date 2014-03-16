@@ -1,9 +1,6 @@
 Ambient Icon
 ============
 
-* Add README
-
-* Add LICENSE
 
 ----
 
@@ -13,7 +10,7 @@ Ambient Icon
 
 * Bug: 3 colors: dark color is not 100% accurate - when none of the components is 1.00
 
-* Rafactor icon file names etc. into an array
+* Rafactor icon file names etc. into an array?
 
 * Bug (small): red/green/blue filter sometimes visible even if opacity is 0.0 (does not really matter but...)
 
